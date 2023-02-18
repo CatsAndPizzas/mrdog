@@ -10,7 +10,6 @@ use super::{ConfigValue, Provider};
 #[derive(Debug)]
 pub enum ConfigError {
     CreateFailed(io::Error),
-    CouldNotLoadValues(toml::ser::Error),
     CouldNotConvertToToml(toml::ser::Error),
     WriteToConfigFailed(io::Error),
 }
@@ -55,16 +54,6 @@ pub fn set_config(item: ConfigValue) -> Result<(), ConfigError> {
 
     fs::write(get_config_path(), to_set.as_bytes()).map_err(ConfigError::WriteToConfigFailed)?;
 
-    Ok(())
-}
-
-pub fn set_value(values: Option<Vec<ConfigValue>>, item: &ConfigValue) -> Result<(), ConfigError> {
-    if values.is_none() {
-        let serialized = toml::to_string(item).map_err(|e| ConfigError::CouldNotLoadValues(e))?;
-        println!("{serialized:?}");
-        fs::write(get_config_path(), serialized)
-            .map_err(|e| ConfigError::WriteToConfigFailed(e))?;
-    }
     Ok(())
 }
 

@@ -1,4 +1,4 @@
-use std::{error::Error, io};
+use std::error::Error;
 
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
@@ -7,12 +7,6 @@ use self::change_request::{ChangeRequest, ChangeRequestProvider};
 
 mod change_request;
 mod config_storage;
-
-// #[derive(Debug)]
-// pub enum ConfigItem {
-//     GitLabApiToken(String),
-//     GitHubApiToken(String),
-// }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Deserialize, Serialize)]
 pub enum Provider {
