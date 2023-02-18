@@ -8,3 +8,6 @@ description = "MR. Dog groups and watches merge requests across all your *hubs"
 
 [dependencies]
 clap = { version = "4.1.1", features = ["derive"] }
+dirs = "4.0.0"
+serde = { version = "1.0.152", features = ["derive"] }
+toml = "0.7.2"
