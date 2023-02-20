@@ -1,6 +1,9 @@
+use std::error::Error;
+
 mod cli;
 mod mrdog;
 
-fn main() {
-    cli::run();
+fn main() -> Result<(), Box<dyn Error>> {
+    cli::run()?;
+    Ok(())
 }
