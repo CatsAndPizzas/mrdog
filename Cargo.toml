@@ -7,7 +7,10 @@ description = "MR. Dog groups and watches merge requests across all your *hubs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+async-trait = "0.1.64"
 clap = { version = "4.1.1", features = ["derive"] }
 dirs = "4.0.0"
+octocrab = "0.18.1"
 serde = { version = "1.0.152", features = ["derive"] }
+tokio = { version = "1.25.0", features = ["full"] }
 toml = "0.7.2"

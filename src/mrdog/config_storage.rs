@@ -57,6 +57,11 @@ pub fn set_config(item: ConfigValue) -> Result<(), ConfigError> {
     Ok(())
 }
 
+pub fn get_tokens() -> Vec<ConfigValue> {
+    // TODO: Get all tokens
+    load_or_create_config().github.unwrap_or(vec![])
+}
+
 fn load_or_create_config() -> Config {
     let exists = path::Path::new(&get_config_path()).exists();
 

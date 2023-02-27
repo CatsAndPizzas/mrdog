@@ -3,6 +3,7 @@ use std::error::Error;
 use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 
+use self::change_request::github::GitHubProvider;
 use self::change_request::{ChangeRequest, ChangeRequestProvider};
 
 mod change_request;
@@ -27,19 +28,33 @@ pub fn set_config(item: ConfigValue) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn list() -> Result<(), Box<dyn Error>> {
-    let change_requests = initialize_providers()
-        .iter()
-        .flat_map(|p| p.fetch())
-        .collect::<Vec<ChangeRequest>>();
+pub async fn list() -> Result<(), Box<dyn Error>> {
+    let mut change_requests = vec![];
+    for p in initialize_providers() {
+        change_requests.append(&mut p.fetch().await);
+    }
     if change_requests.is_empty() {
         todo!("Print help")
     } else {
+        println!("{change_requests:#?}");
         todo!("Print list")
     }
 }
 
 fn initialize_providers() -> Vec<Box<dyn ChangeRequestProvider>> {
-    // TODO: Read config and initialize all providers
-    todo!("initialize_providers")
+    let mut vec: Vec<Box<dyn ChangeRequestProvider>> = vec![];
+    for cf in &config_storage::get_tokens() {
+        match cf {
+            ConfigValue {
+                name,
+                value,
+                provider: Provider::Github,
+            } => {
+                println!("Initializing GH {name}");
+                vec.push(Box::new(GitHubProvider::new(value)));
+            }
+            _ => {}
+        };
+    }
+    return vec;
 }
