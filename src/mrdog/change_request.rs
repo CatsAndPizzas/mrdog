@@ -1,11 +1,18 @@
-mod gitlab;
+use async_trait::async_trait;
 
+pub mod github;
+pub mod gitlab;
+
+#[derive(Debug)]
 pub struct ChangeRequest {
-    // TODO: fields
+    id: String,
+    url: String,
+    title: String,
 }
 
+#[async_trait]
 pub trait ChangeRequestProvider {
     // TODO: Maybe Future/Promise returned instead, not sure rn
     // TODO: Filter param + pagination (or rather limits + ordering)
-    fn fetch(&self) -> Vec<ChangeRequest>;
+    async fn fetch(&self) -> Vec<ChangeRequest>;
 }

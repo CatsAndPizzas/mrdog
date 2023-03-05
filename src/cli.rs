@@ -24,7 +24,7 @@ pub struct Cli {
     pub command: Option<Commands>,
 }
 
-pub fn run() -> Result<(), Box<dyn Error>> {
+pub async fn run() -> Result<(), Box<dyn Error>> {
     let args = Cli::parse();
     match args.command {
         Some(Commands::Set {
@@ -43,6 +43,6 @@ pub fn run() -> Result<(), Box<dyn Error>> {
                 Provider::Github => set_config(config_value),
             }
         }
-        None => mrdog::list(),
+        None => mrdog::list().await,
     }
 }
