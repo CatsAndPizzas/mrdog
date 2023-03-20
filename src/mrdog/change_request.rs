@@ -4,6 +4,7 @@ pub mod github;
 pub mod gitlab;
 
 #[derive(Debug)]
+#[allow(dead_code)] // TODO: Remove when printed
 pub struct ChangeRequest {
     id: String,
     url: String,
@@ -12,7 +13,6 @@ pub struct ChangeRequest {
 
 #[async_trait]
 pub trait ChangeRequestProvider {
-    // TODO: Maybe Future/Promise returned instead, not sure rn
     // TODO: Filter param + pagination (or rather limits + ordering)
     async fn fetch(&self) -> Vec<ChangeRequest>;
 }

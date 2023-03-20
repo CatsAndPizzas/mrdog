@@ -1,4 +1,3 @@
-use dirs;
 use serde::{Deserialize, Serialize};
 use std::{
     fs, io,
@@ -83,9 +82,7 @@ fn load_or_create_config() -> Config {
 
 fn create_config() -> Result<bool, ConfigError> {
     let written = fs::File::create(get_config_path());
-    return written
-        .map(|_| true)
-        .map_err(|e| ConfigError::CreateFailed(e));
+    written.map(|_| true).map_err(ConfigError::CreateFailed)
 }
 
 fn get_config_path() -> PathBuf {

@@ -4,7 +4,7 @@ use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 
 use self::change_request::github::GitHubProvider;
-use self::change_request::{ChangeRequest, ChangeRequestProvider};
+use self::change_request::ChangeRequestProvider;
 
 mod change_request;
 mod config_storage;
@@ -23,9 +23,7 @@ pub struct ConfigValue {
 }
 
 pub fn set_config(item: ConfigValue) -> Result<(), Box<dyn Error>> {
-    let c = config_storage::set_config(item).map_err(|_| "sad")?;
-    println!("{c:?}");
-    Ok(())
+    Ok(config_storage::set_config(item).map_err(|_| "sad")?)
 }
 
 pub async fn list() -> Result<(), Box<dyn Error>> {
@@ -44,17 +42,15 @@ pub async fn list() -> Result<(), Box<dyn Error>> {
 fn initialize_providers() -> Vec<Box<dyn ChangeRequestProvider>> {
     let mut vec: Vec<Box<dyn ChangeRequestProvider>> = vec![];
     for cf in &config_storage::get_tokens() {
-        match cf {
-            ConfigValue {
-                name,
-                value,
-                provider: Provider::Github,
-            } => {
-                println!("Initializing GH {name}");
-                vec.push(Box::new(GitHubProvider::new(value)));
-            }
-            _ => {}
+        if let ConfigValue {
+            name,
+            value,
+            provider: Provider::Github,
+        } = cf
+        {
+            println!("Initializing GH {name}");
+            vec.push(Box::new(GitHubProvider::new(value)));
         };
     }
-    return vec;
+    vec
 }
