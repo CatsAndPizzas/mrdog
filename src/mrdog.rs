@@ -8,6 +8,7 @@ use self::change_request::ChangeRequestProvider;
 
 mod change_request;
 mod config_storage;
+mod printer;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum, Deserialize, Serialize)]
 pub enum Provider {
@@ -34,8 +35,8 @@ pub async fn list() -> Result<(), Box<dyn Error>> {
     if change_requests.is_empty() {
         todo!("Print help")
     } else {
-        println!("{change_requests:#?}");
-        todo!("Print list")
+        printer::print_change_requests(&change_requests);
+        Ok(())
     }
 }
 

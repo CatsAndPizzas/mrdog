@@ -4,11 +4,10 @@ pub mod github;
 pub mod gitlab;
 
 #[derive(Debug)]
-#[allow(dead_code)] // TODO: Remove when printed
 pub struct ChangeRequest {
-    id: String,
-    url: String,
-    title: String,
+    pub id: String,
+    pub url: String,
+    pub title: String,
 }
 
 #[async_trait]
