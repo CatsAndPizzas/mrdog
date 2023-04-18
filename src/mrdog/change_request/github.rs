@@ -18,40 +18,49 @@ impl GitHubProvider {
 // Test @ https://docs.github.com/en/graphql/overview/explorer
 const QUERY: &str = "
 {
-    viewer {
-      pullRequests(first: 100, states: OPEN) {
-        nodes {
-          id
-          title
+  viewer {
+    pullRequests(first: 100, states: OPEN) {
+      nodes {
+        id
+        number
+        repository {
+          nameWithOwner
           url
-          author {
+        }
+        title
+        url
+        author {
+          login
+          url
+        }
+        assignees(first: 100) {
+          nodes {
             login
+            url
           }
-          assignees(first: 100) {
-            nodes {
+        }
+        reviews(first: 100) {
+          nodes {
+            id
+            author {
+              url
               login
             }
           }
-          reviews(first: 100) {
-            edges {
-              node {
-                id
-              }
-            }
-          }
-          changedFiles
-          additions
-          deletions
-          createdAt
-          reviewDecision
-          headRepository {
-            name
-            url
-          }
+        }
+        changedFiles
+        additions
+        deletions
+        createdAt
+        reviewDecision
+        headRepository {
+          name
+          url
         }
       }
     }
   }
+}
 ";
 
 #[async_trait]
@@ -69,7 +78,36 @@ impl ChangeRequestProvider for GitHubProvider {
             .unwrap()
             .iter()
             .map(|i| super::ChangeRequest {
-                id: i["id"].as_str().unwrap().to_string(),
+                project: super::LinkedEntity::new(
+                    i["repository"]["nameWithOwner"]
+                        .as_str()
+                        .unwrap_or("x")
+                        .to_string(),
+                    i["repository"]["url"].as_str().unwrap_or("x").to_string(),
+                ),
+                assignees: i["assignees"]["nodes"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|a| {
+                        super::LinkedEntity::new(
+                            a["login"].as_str().unwrap().to_string(),
+                            a["url"].as_str().unwrap().to_string(),
+                        )
+                    })
+                    .collect(),
+                reviewers: i["reviews"]["nodes"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|r| {
+                        super::LinkedEntity::new(
+                            r["author"]["login"].as_str().unwrap().to_string(),
+                            r["author"]["url"].as_str().unwrap().to_string(),
+                        )
+                    })
+                    .collect(),
+                id: format!("{}", i["number"].as_u64().unwrap_or(0)),
                 url: i["url"].as_str().unwrap().to_string(),
                 title: i["title"].as_str().unwrap().to_string(),
             })

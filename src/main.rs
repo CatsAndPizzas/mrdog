@@ -1,6 +1,4 @@
 use std::error::Error;
-#[macro_use]
-extern crate prettytable;
 mod cli;
 mod mrdog;
 
